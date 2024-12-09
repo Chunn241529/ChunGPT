@@ -4,8 +4,6 @@ import sys
 import time
 from openai import OpenAI
 from rich.console import Console
-from rich.syntax import Syntax
-from rich.text import Text
 from rich.progress import track
 import sys
 
