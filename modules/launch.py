@@ -1,10 +1,5 @@
-import os
 import re
-import sys
 import time
-from openai import OpenAI
-from rich.console import Console
-from rich.progress import track
 from helpers.formatted import *
 from helpers.clean_pycache import *
 from func.models import *
@@ -12,7 +7,7 @@ from func.clear_terminal import *
 from func.scan_file import *
 
 
-def main():
+def start():
     """
     Vòng lặp chính cho tương tác với AI.
     """
@@ -20,7 +15,7 @@ def main():
     clear_python_cache()
     scan_project()
 
-    time.sleep(1)
+    time.sleep(1.5)
     clear_terminal()
 
     global function_list
@@ -28,7 +23,7 @@ def main():
     print(f"Bạn đang sử dụng modal: {selected_model}\n")
 
     while True:
-        user_input = input(">>>  ")
+        user_input = input("\033[1;36m>>>   \033[0m")
         if user_input.lower() == "thoát":
             print("Đã thoát chương trình.")
             break
@@ -57,6 +52,4 @@ def main():
         send_to_ai(None, None, user_input, selected_model)
 
 
-main()
-# if __name__ == "__main__":
-#     main()
+start()

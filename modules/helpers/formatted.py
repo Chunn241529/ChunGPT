@@ -23,7 +23,7 @@ def formatted_code_block(parts):
             code = parts[1].strip()
 
         # Định dạng đoạn mã code với ngôn ngữ
-        syntax = Syntax(code, language, theme="gruvbox-dark", line_numbers=False)
+        syntax = Syntax(code, language, theme="monokai", line_numbers=False)
         return syntax
 
 
@@ -45,7 +45,7 @@ def formatted_response(response):
         # Lấy đoạn văn bản trước khối code block
         text_before = response[last_index : match.start()]
         if text_before.strip():
-            console.print(Markdown(text_before), end="")  # In văn bản thường
+            console.print(Markdown(text_before))  # In văn bản thường
 
         # Lấy ngôn ngữ và mã code
         language = match.group(1).strip() or "plaintext"
@@ -62,20 +62,20 @@ def formatted_response(response):
     # Hiển thị phần còn lại của văn bản sau khối code cuối
     remaining_text = response[last_index:]
     if remaining_text.strip():
-        console.print(Markdown(remaining_text), end="")
+        console.print(Markdown(remaining_text))
 
 
-# response = (
-#     "Hello **world** \n\n"
-#     "```python\ndef tinh_tong(n):\n\n"
-#     "    return (n * (n + 1)) // 2\n\n"
-#     "# Lấy giá trị của n từ người dùng\nn = int(input('Nhập vào một số tự nhiên n: '))\n"
-#     "print(f'Độ lớn của n là: {n}')\ntong = tinh_tong(n)\n"
-#     "print(f'Tổng các số tự nhiên từ 1 đến {n} là: {tong}')\n```\n\n"
-#     "**and welcome**"
-# )
-# formatted_response(
-#     "\n\n---------------------[DEBUG]---------------------\n\n"
-#     + response
-#     + "\n\n---------------------[DEBUG]---------------------\n\n"
-# )
+response = (
+    "Hello **world** \n\n"
+    "```python\ndef tinh_tong(n):\n\n"
+    "    return (n * (n + 1)) // 2\n\n"
+    "# Lấy giá trị của n từ người dùng\nn = int(input('Nhập vào một số tự nhiên n: '))\n"
+    "print(f'Độ lớn của n là: {n}')\ntong = tinh_tong(n)\n"
+    "print(f'Tổng các số tự nhiên từ 1 đến {n} là: {tong}')\n```\n\n"
+    "**and welcome**"
+)
+formatted_response(
+    "\n\n---------------------[DEBUG]---------------------\n\n"
+    + response
+    + "\n\n---------------------[DEBUG]---------------------\n\n"
+)

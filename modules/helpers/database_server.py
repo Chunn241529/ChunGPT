@@ -1,9 +1,8 @@
 import os
 import sqlite3
-from datetime import datetime
 
 # Kiểm tra nếu file database tồn tại và xóa nó
-db_file = "chatbot.db"
+db_file = "chatbot_v2_server.sqlite3"
 if os.path.exists(db_file):
     os.remove(db_file)
     print(f"File '{db_file}' đã được xóa.")
@@ -11,28 +10,6 @@ if os.path.exists(db_file):
 # Kết nối đến cơ sở dữ liệu SQLite (hoặc tạo mới nếu chưa có)
 conn = sqlite3.connect(db_file)
 cursor = conn.cursor()
-
-# Tạo bảng emotions với cột emoji
-cursor.execute(
-    """
-    CREATE TABLE IF NOT EXISTS emotions (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        emotion_name TEXT NOT NULL UNIQUE,
-        emoji TEXT
-    )
-    """
-)
-
-# Tạo bảng datasets
-cursor.execute(
-    """
-    CREATE TABLE IF NOT EXISTS datasets (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        datasets_name TEXT NOT NULL UNIQUE,
-        description TEXT
-    )
-    """
-)
 
 # Tạo bảng settings cho việc thay đổi ảnh nền, cỡ chữ và liên kết với user
 cursor.execute(
@@ -62,6 +39,8 @@ cursor.execute(
         profile_picture TEXT,                -- Ảnh đại diện
         bio TEXT,                            -- Tiểu sử người dùng
         date_of_birth DATE,                  -- Ngày sinh
+        database_client TEXT,                 -- database của client đã tạo
+        auth_token TEXT,                        -- token
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Thời điểm đăng ký
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- Thời gian cập nhật
     )
@@ -73,59 +52,6 @@ cursor.execute(
     """
     ALTER TABLE users
     ADD COLUMN flag BOOLEAN DEFAULT FALSE;
-    """
-)
-
-# Tạo bảng group_history
-cursor.execute(
-    """
-    CREATE TABLE IF NOT EXISTS group_history (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        group_name TEXT,
-        user_id INTEGER,
-        dataset_id INTEGER,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-        FOREIGN KEY (dataset_id) REFERENCES datasets (id) ON DELETE SET NULL
-    )
-    """
-)
-
-# Sửa bảng conversation_history để chỉ còn khóa phụ với group_id và emotion_id
-cursor.execute(
-    """
-    CREATE TABLE IF NOT EXISTS conversation_history (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        group_id INTEGER,
-        emotion_id INTEGER,
-        input_text TEXT NOT NULL,
-        img_base64 TEXT,
-        ai_response TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (group_id) REFERENCES group_history (id) ON DELETE CASCADE,
-        FOREIGN KEY (emotion_id) REFERENCES emotions (id) ON DELETE SET NULL
-    )
-    """
-)
-
-cursor.execute(
-    """
-    CREATE TABLE IF NOT EXISTS topics (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        topic_name TEXT UNIQUE
-    );
-    """
-)
-
-cursor.execute(
-    """
-    CREATE TABLE IF NOT EXISTS vocabulary (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        topic_id INTEGER,
-        term TEXT,
-        definition TEXT,
-        FOREIGN KEY (topic_id) REFERENCES topics(id) ON DELETE CASCADE
-    );
     """
 )
 
@@ -148,4 +74,4 @@ cursor.execute(
 conn.commit()
 conn.close()
 
-print("Đã tạo lại db thành công!!!")
+print("Tạo thành công!!!")

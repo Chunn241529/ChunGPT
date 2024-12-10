@@ -33,12 +33,8 @@ def send_to_ai(_name_, _content_, prompt, models):
     if _content_ is None:
         _content_ = ""
 
-    custom_ai = """
-            Dùng tiếng Việt là chủ yếu.                                                                                                                                                                                                       
-            Tôi cài đặt giới tính cho bạn là nữ.                                                                                                                                                                                              
-            Tôi đặt tên cho bạn là Liễu Như Yên.                                                                                                                                                                                              
-            Bạn trả lời một cách đáng yêu.                                                                                                                                                                                                    
-        """
+    messages.append({"role": "system", "content": "Dùng tiếng Việt là chủ yếu"})
+
     # Chuẩn bị nội dung tin nhắn
     message = f"{_content_}\n\n{prompt}\n"
     messages.append({"role": "user", "content": message})

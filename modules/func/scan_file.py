@@ -1,10 +1,7 @@
 import os
 import re
-import sys
-import time
-from openai import OpenAI
-from rich.console import Console
 from rich.progress import track
+
 from helpers.formatted import *
 from helpers.clean_pycache import *
 from func.models import *
@@ -29,7 +26,7 @@ def scan_project(directory="."):
                 file_paths.append(os.path.join(root, file))
 
     # Thêm `track` để hiển thị tiến trình khi xử lý danh sách file
-    for filepath in track(file_paths, description="Loading model... "):
+    for filepath in track(file_paths, description="Quét dự án... "):
         with open(filepath, "r", encoding="utf-8") as f:
             content = f.read()
             functions = extract_functions(content, filepath)
