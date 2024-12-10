@@ -2,4 +2,4 @@
 .vscode/
 commit_git.bat
 __convert_bat_to_exe__.bat
-modules\assets
+modules/assets
