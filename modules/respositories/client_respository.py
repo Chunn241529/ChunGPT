@@ -36,12 +36,19 @@ class Repository_client:
         with self._connect() as conn:
             cursor = conn.cursor()
             cursor.execute("SELECT * FROM brain_ai")
-            return cursor.fetchall()
+            result = cursor.fetchall()
+            return result  # Trả về tất cả bản ghi
 
     # =============================== TABLE: brain_history_scan_project ===============================
 
     def insert_brain_history_scan(self, filepath, func):
         """Thêm một bản ghi vào bảng brain_history_scan_project."""
+        # Đảm bảo `func` là chuỗi
+        if isinstance(func, tuple):
+            func = ", ".join(map(str, func))  # Nối các phần tử của tuple thành chuỗi
+        elif not isinstance(func, str):
+            func = str(func)  # Chuyển các kiểu khác thành chuỗi nếu cần
+
         with self._connect() as conn:
             cursor = conn.cursor()
             cursor.execute(
@@ -55,10 +62,15 @@ class Repository_client:
 
     def get_brain_history_scan(self):
         """Lấy tất cả bản ghi từ bảng brain_history_scan_project."""
-        with self._connect() as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM brain_history_scan_project")
-            return cursor.fetchall()
+        try:
+            with self._connect() as conn:
+                cursor = conn.cursor()
+                cursor.execute("SELECT * FROM brain_history_scan_project")
+                result = cursor.fetchall()
+                return result
+        except Exception as e:
+            print(f"Lỗi khi truy vấn cơ sở dữ liệu: {e}")
+            return []
 
     def get_brain_history_scan_by_filepath(self, filepath):
         """Lấy tất cả bản ghi từ bảng brain_history_scan_project theo filepath."""
@@ -72,16 +84,16 @@ class Repository_client:
 
     # =============================== TABLE: brain_history_chat ===============================
 
-    def insert_brain_history_chat(self, role, content):
+    def insert_brain_history_chat(self, brain_ai_id, role, content):
         """Thêm một bản ghi vào bảng brain_history_chat."""
         with self._connect() as conn:
             cursor = conn.cursor()
             cursor.execute(
                 """
-                INSERT INTO brain_history_chat (role, content, updated_at)
-                VALUES (?, ?, ?)
+                INSERT INTO brain_history_chat (brain_ai_id, role, content, updated_at)
+                VALUES (?, ?, ?, ?)
                 """,
-                (role, content, datetime.now()),
+                (brain_ai_id, role, content, datetime.now()),
             )
             conn.commit()
 
@@ -99,6 +111,16 @@ class Repository_client:
             cursor.execute(
                 "SELECT * FROM brain_history_chat WHERE role = ?",
                 (role,),
+            )
+            return cursor.fetchall()
+
+    def get_brain_history_chat_by_brain_ai_id(self, brain_ai_id):
+        """Lấy tất cả bản ghi từ bảng brain_history_chat theo brain_ai_id."""
+        with self._connect() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                "SELECT * FROM brain_history_chat WHERE brain_ai_id = ?",
+                (brain_ai_id,),
             )
             return cursor.fetchall()
 

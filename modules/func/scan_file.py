@@ -8,6 +8,11 @@ from func.models import *
 from func.clear_terminal import *
 from func.chat import *
 
+# respository
+from respositories.client_respository import Repository_client
+
+repository_client = Repository_client("client_db_1.sqlite3")
+
 
 def scan_project(directory="."):
     """
@@ -30,9 +35,13 @@ def scan_project(directory="."):
         with open(filepath, "r", encoding="utf-8") as f:
             content = f.read()
             functions = extract_functions(content, filepath)
-            function_list.extend(
-                [(filepath, func) for func in functions]
-            )  # Lưu theo đường dẫn file
+            # function_list.extend([(filepath, func) for func in functions])
+            for func in functions:
+                # Đảm bảo `func` là chuỗi trước khi truyền vào
+                func_str = (
+                    ", ".join(map(str, func)) if isinstance(func, tuple) else str(func)
+                )
+                repository_client.insert_brain_history_scan(filepath, func_str)
 
 
 def extract_functions(content, file_type):

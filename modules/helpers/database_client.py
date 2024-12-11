@@ -24,6 +24,22 @@ def create_database_client(db_name):
         """
     )
 
+    # Tạo bảng brain_history_chat
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS brain_history_chat (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            brain_ai_id INTEGER,  -- Khóa ngoại tham chiếu đến bảng brain_ai
+            role TEXT,         
+            content TEXT,      
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (brain_ai_id) REFERENCES brain_ai (id)
+            ON DELETE CASCADE    -- Xóa bản ghi liên quan nếu bản ghi cha bị xóa
+            ON UPDATE CASCADE    -- Cập nhật khóa nếu bản ghi cha thay đổi
+        )
+        """
+    )
+
     # Tạo bảng brain_history_scan_project
     cursor.execute(
         """
@@ -36,18 +52,6 @@ def create_database_client(db_name):
         """
     )
 
-    # Tạo bảng brain_history_chat
-    cursor.execute(
-        """
-        CREATE TABLE IF NOT EXISTS brain_history_chat (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            role TEXT,         
-            content TEXT,          
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-        """
-    )
-
     # Lưu thay đổi và đóng kết nối
     conn.commit()
     conn.close()
@@ -55,4 +59,4 @@ def create_database_client(db_name):
     print("Tạo thành công!!!")
 
 
-# create_database_client("client_db_1.sqlite3")
+create_database_client("client_db_1.sqlite3")

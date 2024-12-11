@@ -23,7 +23,9 @@ def formatted_code_block(parts):
             code = parts[1].strip()
 
         # Định dạng đoạn mã code với ngôn ngữ
-        syntax = Syntax(code, language, theme="monokai", line_numbers=False)
+        syntax = Syntax(
+            "\n" + code + "\n", language, theme="monokai", line_numbers=False
+        )
         return syntax
 
 
