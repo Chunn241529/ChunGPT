@@ -34,8 +34,6 @@ def create_database_client(db_name):
             content TEXT,      
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (brain_ai_id) REFERENCES brain_ai (id)
-            ON DELETE CASCADE    -- Xóa bản ghi liên quan nếu bản ghi cha bị xóa
-            ON UPDATE CASCADE    -- Cập nhật khóa nếu bản ghi cha thay đổi
         )
         """
     )

@@ -114,13 +114,21 @@ class Repository_client:
             )
             return cursor.fetchall()
 
-    def get_brain_history_chat_by_brain_ai_id(self, brain_ai_id):
-        """Lấy tất cả bản ghi từ bảng brain_history_chat theo brain_ai_id."""
+    def get_brain_history_chat_by_brain_ai_id(self):
+        """Lấy tất cả bản ghi từ bảng brain_history_chat có brain_ai_id lớn nhất."""
         with self._connect() as conn:
             cursor = conn.cursor()
+            # Lấy brain_ai_id lớn nhất
+            cursor.execute("SELECT MAX(brain_ai_id) FROM brain_history_chat")
+            max_brain_ai_id = cursor.fetchone()[0]
+
+            if max_brain_ai_id is None:
+                return []  # Không có bản ghi nào
+
+            # Lấy tất cả các bản ghi với brain_ai_id lớn nhất
             cursor.execute(
                 "SELECT * FROM brain_history_chat WHERE brain_ai_id = ?",
-                (brain_ai_id,),
+                (max_brain_ai_id,),
             )
             return cursor.fetchall()
 

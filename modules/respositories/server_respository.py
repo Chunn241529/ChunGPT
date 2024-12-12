@@ -23,12 +23,7 @@ class Repository_server:
             cursor = conn.cursor()
             cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
             result = cursor.fetchone()
-            if result:
-                return result[
-                    0
-                ]  # Trả về giá trị đầu tiên trong tuple  # Hoặc bạn có thể tùy chỉnh theo cách bạn muốn
-
-            return "User not found in (get_user_by_id)"  # Trả về thông báo nếu không có người dùng nào
+            return result  # Trả về thông báo nếu không có người dùng nào
 
     ### USERS TABLE METHODS ###
     def get_client_by_id(self, user_id):
@@ -60,7 +55,7 @@ class Repository_server:
         """Thêm người dùng mới."""
         # Nếu database_client không được cung cấp, ta tạo giá trị mặc định
         if not database_client:
-            database_client = "__" + name + "__" + ".sqlite3"
+            database_client = "__" + username + "__" + ".sqlite3"
 
         with self._connect() as conn:
             cursor = conn.cursor()

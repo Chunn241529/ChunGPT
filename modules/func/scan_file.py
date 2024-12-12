@@ -13,6 +13,9 @@ from respositories.client_respository import Repository_client
 
 repository_client = Repository_client("client_db_1.sqlite3")
 
+repository_client = Repository_client("client_db_1.sqlite3")
+function_list = []  # Đặt function_list là biến toàn cục
+
 
 def scan_project(directory="."):
     """
@@ -30,18 +33,25 @@ def scan_project(directory="."):
             if file.endswith((".py", ".js", ".css")):
                 file_paths.append(os.path.join(root, file))
 
-    # Thêm `track` để hiển thị tiến trình khi xử lý danh sách file
-    for filepath in track(file_paths, description="Quét dự án... "):
+    # Hiển thị tiến trình xử lý danh sách file
+    for filepath in track(file_paths, description="Đang quét dự án..."):
         with open(filepath, "r", encoding="utf-8") as f:
             content = f.read()
             functions = extract_functions(content, filepath)
-            # function_list.extend([(filepath, func) for func in functions])
+
+            # Ghi các hàm vào database và cập nhật danh sách function_list
             for func in functions:
-                # Đảm bảo `func` là chuỗi trước khi truyền vào
                 func_str = (
                     ", ".join(map(str, func)) if isinstance(func, tuple) else str(func)
                 )
                 repository_client.insert_brain_history_scan(filepath, func_str)
+            list_db = repository_client.get_brain_history_scan()
+            function_list.extend(
+                [
+                    (filepath_in_db, func_in_db)
+                    for _, filepath_in_db, func_in_db, _ in list_db
+                ]
+            )
 
 
 def extract_functions(content, file_type):
@@ -70,34 +80,29 @@ def display_function_code(function_name, prompt):
     Tìm và hiển thị code của hàm dựa trên tên được cung cấp.
     Sau đó gửi nội dung code và prompt tới AI để phân tích.
     """
-    for filepath, (type_, name) in function_list:
+    for filepath, func_in_db in function_list:
+        type_, name = func_in_db.split(", ")
         if name == function_name:  # Tìm đúng hàm
             try:
                 # Đọc file gốc để lấy nội dung đầy đủ của hàm
                 with open(filepath, "r", encoding="utf-8") as f:
                     content = f.read()
 
-                # Lấy phần code cụ thể của hàm bằng regex
+                # Xác định pattern regex dựa trên loại (def/class/function)
                 if type_ == "def":  # Python function
-                    # Bắt cả hàm với docstring và decorator
                     pattern = rf"(^\s*def {function_name}\(.*?\):[\s\S]*?(?=^\s*def |\s*class |\Z))"
                 elif type_ == "class":  # Python class
-                    # Bắt cả class với docstring
                     pattern = (
                         rf"(^\s*class {function_name}\(.*?\):[\s\S]*?(?=^\s*class |\Z))"
                     )
-                else:
-                    # JavaScript or CSS case
+                else:  # JavaScript or CSS case
                     pattern = rf"{function_name}\s*?[{{(][\s\S]*?[}})]"
 
                 # Thực hiện tìm kiếm với re.MULTILINE để hỗ trợ pattern trên nhiều dòng
                 match = re.search(pattern, content, re.MULTILINE)
                 if match:
                     function_code = match.group(0)
-                    # print(f"\nCode của hàm {function_name} trong file {filepath}:\n")
-                    print(function_code)
-
-                    # Gửi đoạn code này và prompt tới AI để phân tích
+                    # Gửi code và prompt tới AI
                     send_to_ai(function_name, function_code, prompt, default_model_code)
                     return
                 else:
@@ -120,16 +125,8 @@ def display_file(file_name, prompt):
         print("Danh sách function_list rỗng hoặc không tồn tại.\n")
         return
 
-    found_files = []  # Duy trì danh sách các file khớp
+    found_files = [filepath for filepath, _ in function_list if file_name in filepath]
 
-    # Duyệt qua danh sách các file đã quét được
-    for filepath, (type_, name) in function_list:
-        if (
-            file_name in filepath
-        ):  # Tìm kiếm file dựa trên đường dẫn đầy đủ bao gồm phần mở rộng
-            found_files.append(filepath)
-
-    # Nếu không tìm thấy file nào, in thông báo lỗi
     if not found_files:
         print(f"Không tìm thấy file {file_name} trong danh sách đã quét.\n")
         return

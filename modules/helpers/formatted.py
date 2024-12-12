@@ -67,17 +67,17 @@ def formatted_response(response):
         console.print(Markdown(remaining_text))
 
 
-response = (
-    "Hello **world** \n\n"
-    "```python\ndef tinh_tong(n):\n\n"
-    "    return (n * (n + 1)) // 2\n\n"
-    "# Lấy giá trị của n từ người dùng\nn = int(input('Nhập vào một số tự nhiên n: '))\n"
-    "print(f'Độ lớn của n là: {n}')\ntong = tinh_tong(n)\n"
-    "print(f'Tổng các số tự nhiên từ 1 đến {n} là: {tong}')\n```\n\n"
-    "**and welcome**"
-)
-formatted_response(
-    "\n\n---------------------[DEBUG]---------------------\n\n"
-    + response
-    + "\n\n---------------------[DEBUG]---------------------\n\n"
-)
+# response = (
+#     "Hello **world** \n\n"
+#     "```python\ndef tinh_tong(n):\n\n"
+#     "    return (n * (n + 1)) // 2\n\n"
+#     "# Lấy giá trị của n từ người dùng\nn = int(input('Nhập vào một số tự nhiên n: '))\n"
+#     "print(f'Độ lớn của n là: {n}')\ntong = tinh_tong(n)\n"
+#     "print(f'Tổng các số tự nhiên từ 1 đến {n} là: {tong}')\n```\n\n"
+#     "**and welcome**"
+# )
+# formatted_response(
+#     "\n\n---------------------[DEBUG]---------------------\n\n"
+#     + response
+#     + "\n\n---------------------[DEBUG]---------------------\n\n"
+# )

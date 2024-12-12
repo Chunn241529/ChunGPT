@@ -11,27 +11,25 @@ from respositories.client_respository import Repository_client
 repo = Repository_client("client_db_1.sqlite3")
 
 
-def start():
-    """
-    Vòng lặp chính cho tương tác với AI.
-    """
-
+def check():
     scan = repo.get_brain_history_scan()
 
     if not scan:  # Kiểm tra nếu bảng trống
-
         clear_terminal()
         clear_python_cache()
         scan_project()
-
-        time.sleep(1.5)
         clear_terminal()
     else:
         clear_terminal()
         clear_python_cache()
-        time.sleep(1.5)
         clear_terminal()
 
+
+def start():
+    """
+    Vòng lặp chính cho tương tác với AI.
+    """
+    check()
     global function_list
     selected_model = default_model
     print(f"Bạn đang sử dụng modal: {selected_model}\n")

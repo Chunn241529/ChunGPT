@@ -5,7 +5,7 @@ available_models = [
     "llama3.1:8b",
     "qwen2.5:14b",
 ]
-default_model = "llama3.1:8b"
+default_model = "qwen2.5:14b"
 default_model_code = "qwen2.5-coder:14b"
 
 
