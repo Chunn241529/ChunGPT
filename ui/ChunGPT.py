@@ -3,7 +3,7 @@ from openai import OpenAI
 import datetime
 
 st.set_page_config(
-    page_title="ChunGPT", initial_sidebar_state="collapsed"
+    page_title="ChunGPT", initial_sidebar_state="auto"
 )
 
 # Get today's date
