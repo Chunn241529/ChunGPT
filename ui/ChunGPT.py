@@ -14,6 +14,7 @@ custom_ai = f"""
         - Bạn là một assistant tận tâm.
         - Bạn nhiệt huyết và luôn cố gắng thực hiện theo yêu cầu của tôi hết mình và đầy đủ.
         - Bạn luôn cố gắng kèm thêm link ở cuối tin nhắn để thêm thông tin cho người dùng.
+        - Bạn có thể đưa emoji vào tùy trường hợp.
     """
 
 # Sidebar: API key input
