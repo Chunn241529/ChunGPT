@@ -17,7 +17,7 @@ custom_ai = f"""
 # Sidebar: API key input
 with st.sidebar:
     ollama_api_key = "ollama"
-    "[Get an Ollama API key](https://ollama.com/)"
+    # "[Get an Ollama API key](https://ollama.com/)"
     "[View the source code](https://github.com/streamlit/llm-examples/blob/main/Chatbot.py)"
 
 st.title("💬 ChunGPT")
@@ -54,7 +54,9 @@ if prompt := st.chat_input():
         st.chat_message("assistant").write("🤔🤔🤔")  # Hiển thị hiệu ứng loading
 
     # Create the Ollama client with the base URL and API key
-    client = OpenAI(base_url="http://localhost:11434/v1", api_key=ollama_api_key)
+    client = OpenAI(
+        base_url="https://chungpt.streamlit.app/v1", api_key=ollama_api_key
+    )
 
     # Request the response from Ollama using the chat completions API
     response = client.chat.completions.create(
