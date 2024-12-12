@@ -41,14 +41,19 @@ def generate_llama2_response(prompt):
         base_url="https://8668-171-243-49-10.ngrok-free.app/v1",
         api_key=ollama_api_key,
     )
+
+    # Sử dụng stream để nhận dữ liệu từng phần, giúp phản hồi nhanh hơn
     response = client.chat.completions.create(
-        model="qwen2.5:14b", messages=st.session_state["messages"]
+        model="qwen2.5:14b",
+        messages=st.session_state["messages"],
+        stream=True,
     )
-    return response.choices[0].message.content
+
+    return response
 
 
 # Input from user
-if prompt := st.chat_input(placeholder=" Nhập tin nhắn..."):
+if prompt := st.chat_input(placeholder="Nhập tin nhắn..."):
     if not ollama_api_key:
         st.info("Please add your Ollama API key to continue.")
         st.stop()
@@ -60,13 +65,32 @@ if prompt := st.chat_input(placeholder=" Nhập tin nhắn..."):
     # Generate a new response if last message is not from assistant
     if st.session_state.messages[-1]["role"] != "assistant":
         with st.chat_message("assistant"):
-            with st.spinner(""):
-                response = generate_llama2_response(prompt)
-                placeholder = st.empty()
-                full_response = ""
-                for item in response:
-                    full_response += item
-                    placeholder.markdown(full_response)
-                placeholder.markdown(full_response)
-        message = {"role": "assistant", "content": full_response}
-        st.session_state.messages.append(message)
+            # Create a placeholder for the spinner and response
+            spinner_placeholder = st.empty()
+            response_placeholder = st.empty()
+
+            with spinner_placeholder:
+                with st.spinner(""):  # Hiển thị spinner trong khi đang xử lý
+                    # Gọi hàm lấy phản hồi từ AI với stream
+                    response = generate_llama2_response(prompt)
+                    full_response = ""
+
+                    # Hiển thị phản hồi từng phần
+                    for chunk in response:
+                        content = (
+                            chunk.choices[0].delta.content
+                            if hasattr(chunk.choices[0].delta, "content")
+                            else ""
+                        )
+                        full_response += content
+                        response_placeholder.markdown(
+                            full_response
+                        )  # Cập nhật mỗi phần của phản hồi
+
+                    # Sau khi có đủ phản hồi, xóa spinner
+                    spinner_placeholder.empty()
+
+                # Thêm phản hồi vào lịch sử tin nhắn
+                st.session_state.messages.append(
+                    {"role": "assistant", "content": full_response}
+                )
