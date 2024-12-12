@@ -55,7 +55,7 @@ if prompt := st.chat_input(placeholder=" Nhập tin nhắn..."):
 
     # Create the Ollama client with the base URL and API key
     client = OpenAI(
-        base_url="https://74bd-171-243-49-10.ngrok-free.app/v1", api_key=ollama_api_key
+        base_url="https://8668-171-243-49-10.ngrok-free.app/v1", api_key=ollama_api_key
     )
 
     # Request the response from Ollama using the chat completions API
