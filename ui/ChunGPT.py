@@ -39,7 +39,7 @@ for msg in st.session_state.messages:
         st.chat_message(msg["role"]).write(msg["content"])
 
 # Input from user
-if prompt := st.chat_input():
+if prompt := st.chat_input(placeholder=" Nhập tin nhắn..."):
     if not ollama_api_key:
         st.info("Please add your Ollama API key to continue.")
         st.stop()
