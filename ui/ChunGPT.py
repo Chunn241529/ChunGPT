@@ -60,7 +60,7 @@ if prompt := st.chat_input(placeholder=" Nhập tin nhắn..."):
     # Generate a new response if last message is not from assistant
     if st.session_state.messages[-1]["role"] != "assistant":
         with st.chat_message("assistant"):
-            with st.spinner("🤔"):
+            with st.spinner(""):
                 response = generate_llama2_response(prompt)
                 placeholder = st.empty()
                 full_response = ""
