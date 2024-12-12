@@ -17,7 +17,7 @@ custom_ai = f"""
 # Sidebar: API key input
 with st.sidebar:
     ollama_api_key = "ollama"
-    "[View the source code](https://github.com/streamlit/llm-examples/blob/main/Chatbot.py)"
+    "[View the source code](https://github.com/Chunn241529/ChunGPT/blob/main/ui/ChunGPT.py)"
 
 st.title("💬 ChunGPT")
 st.caption("🚀 ChunGPT powered by Ollama")
