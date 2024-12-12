@@ -2,9 +2,7 @@ import streamlit as st
 from openai import OpenAI
 import datetime
 
-st.set_page_config(
-    page_title="ChunGPT", initial_sidebar_state="auto"
-)
+st.set_page_config(page_title="ChunGPT", initial_sidebar_state="auto")
 
 # Get today's date
 today = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -25,7 +23,7 @@ with st.sidebar:
     st.empty()
 
 st.title("💬 ChunGPT")
-st.caption("🚀 ChunGPT powered by Ollama")
+st.caption("🚀 ChungGPT được cung cấp bởi OllamaAI")
 
 # Initialize message state with custom AI instructions
 if "messages" not in st.session_state:
