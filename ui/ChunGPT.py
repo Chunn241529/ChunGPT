@@ -2,6 +2,10 @@ import streamlit as st
 from openai import OpenAI
 import datetime
 
+st.set_page_config(
+    page_title="ChunGPT", initial_sidebar_state="collapsed"
+)
+
 # Get today's date
 today = datetime.datetime.now().strftime("%Y-%m-%d")
 
@@ -17,7 +21,8 @@ custom_ai = f"""
 # Sidebar: API key input
 with st.sidebar:
     ollama_api_key = "ollama"
-    "[View the source code](https://github.com/Chunn241529/ChunGPT/blob/main/ui/ChunGPT.py)"
+    "[Source của tôi](https://github.com/Chunn241529/ChunGPT/blob/main/ui/ChunGPT.py)"
+    st.empty()
 
 st.title("💬 ChunGPT")
 st.caption("🚀 ChunGPT powered by Ollama")
