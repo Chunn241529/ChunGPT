@@ -38,31 +38,25 @@ IF NOT EXIST requirements.txt (
     echo Khởi tạo file requirements.txt...
     (
         echo openai
-        echo python-dotenv
+        echo streamlit
+        echo duckduckgo-search
+        echo streamlit-feedback
         echo bcrypt
         echo Flask-Session
         echo requests
         echo numpy
         echo pillow
-        echo tensorflow
         echo protobuf
         echo tqdm
         echo gfpgan
         echo Flask
         echo werkzeug
-        echo pyttsx3
         echo gTTS
         echo schedule
         echo markdown
         echo pygments
         echo beautifulsoup4
-        echo streamlit
-        echo langchain
-        echo duckduckgo-search
-        echo anthropic
-        echo trubrics
-        echo streamlit-feedback
-        echo langchain-community
+
     ) > requirements.txt
 ) ELSE (
     echo requirements.txt already exists.
