@@ -1,10 +1,38 @@
 import streamlit as st
 from openai import OpenAI
 import datetime
+import subprocess
 
 st.set_page_config(page_title="ChunGPT", initial_sidebar_state="auto")
 
-url = "https://da22-171-243-49-10.ngrok-free.app"
+
+# Function to generate response using CLI
+def chat_with_cli(prompt):
+    try:
+        # Run the CLI command to fetch the chat response
+        result = subprocess.run(
+            ["ollama", "run", "qwen2.5:14b"],
+            input=prompt,
+            capture_output=True,
+            text=True,
+        )
+        # Check if the command was successful
+        if result.returncode == 0:
+            return result.stdout.strip()
+        else:
+            st.error(
+                f"Failed to retrieve response from CLI. Error: {result.stderr.strip()}"
+            )
+            st.stop()
+    except FileNotFoundError:
+        st.error(
+            "CLI command not found. Ensure the CLI is installed and the correct command is used."
+        )
+        st.stop()
+    except Exception as e:
+        st.error(f"Error running CLI command: {e}")
+        st.stop()
+
 
 # Get today's date
 today = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -18,6 +46,7 @@ custom_ai = f"""
         - Bạn luôn cố gắng kèm thêm link ở cuối tin nhắn để thêm thông tin cho người dùng.
         - Bạn có thể đưa emoji vào tùy trường hợp.
         - Trừ tiếng Anh và Tiếng Việt, bạn không đưa ngôn ngữ khác vào.
+        - No Yapping, Limit Prose, No Fluff
     """
 
 # Sidebar: API key input
@@ -41,63 +70,28 @@ for msg in st.session_state.messages:
     if msg["role"] != "system":
         st.chat_message(msg["role"]).write(msg["content"])
 
-
-def generate_llama2_response(prompt):
-    """Function to generate response from the AI server."""
-    client = OpenAI(
-        base_url="https://da22-171-243-49-10.ngrok-free.app/v1",
-        api_key=ollama_api_key,
-    )
-
-    # Sử dụng stream để nhận dữ liệu từng phần, giúp phản hồi nhanh hơn
-    response = client.chat.completions.create(
-        model="qwen2.5:14b",
-        messages=st.session_state["messages"],
-        stream=True,
-    )
-
-    return response
-
-
 # Input from user
 if prompt := st.chat_input(placeholder="Nhập tin nhắn..."):
-    if not ollama_api_key:
-        st.info("Please add your Ollama API key to continue.")
-        st.stop()
-
     # Append user input to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.chat_message("user").write(prompt)
 
-    # Generate a new response if last message is not from assistant
-    if st.session_state.messages[-1]["role"] != "assistant":
-        with st.chat_message("assistant"):
-            # Create a placeholder for the spinner and response
-            spinner_placeholder = st.empty()
-            response_placeholder = st.empty()
+    # Generate response using CLI
+    with st.chat_message("assistant"):
+        # Create a placeholder for the spinner and response
+        spinner_placeholder = st.empty()
+        response_placeholder = st.empty()
 
-            with spinner_placeholder:
-                with st.spinner(""):  # Hiển thị spinner trong khi đang xử lý
-                    # Gọi hàm lấy phản hồi từ AI với stream
-                    response = generate_llama2_response(prompt)
-                    full_response = ""
+        with spinner_placeholder:
+            with st.spinner("Đang xử lý..."):
+                # Call the CLI chat function
+                full_response = chat_with_cli(prompt)
+                response_placeholder.markdown(full_response)  # Display full response
 
-                    # Hiển thị phản hồi từng phần
-                    for chunk in response:
-                        content = (
-                            chunk.choices[0].delta.content
-                            if hasattr(chunk.choices[0].delta, "content")
-                            else ""
-                        )
-                        full_response += content
-                        response_placeholder.markdown(
-                            full_response
-                        )  # Cập nhật mỗi phần của phản hồi
+        # Remove spinner after displaying response
+        spinner_placeholder.empty()
 
-                    # Sau khi có đủ phản hồi, xóa spinner
-                    spinner_placeholder.empty()
-
-                # Thêm phản hồi vào lịch sử tin nhắn
-                st.session_state.messages.append(
-                    {"role": "assistant", "content": full_response}
-                )
+        # Add response to chat history
+        st.session_state.messages.append(
+            {"role": "assistant", "content": full_response}
+        )
