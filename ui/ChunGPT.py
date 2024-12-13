@@ -32,7 +32,8 @@ custom_ai = f"""
 # Sidebar: API key input
 with st.sidebar:
     ollama_api_key = "ollama"
-    "[Source của tôi](https://github.com/Chunn241529/ChunGPT/blob/main/ui/ChunGPT.py)"
+    "[My source](https://github.com/Chunn241529/ChunGPT/blob/main/ui/ChunGPT.py) 🗃️"
+    "[Buy me a coffee](https://github.com/Chunn241529/ChunGPT/blob/main/ui/assets/img/buymecoffee.png) ❤️"
     button_clicked = st.sidebar.button("Xóa tin nhắn")
     if button_clicked:
         repo_client.delete_brain_history_chat_all()
