@@ -45,7 +45,7 @@ for msg in st.session_state.messages:
 def generate_llama2_response(prompt):
     """Function to generate response from the AI server."""
     client = OpenAI(
-        base_url=f"{url}/v1",
+        base_url="https://da22-171-243-49-10.ngrok-free.app/v1",
         api_key=ollama_api_key,
     )
 
