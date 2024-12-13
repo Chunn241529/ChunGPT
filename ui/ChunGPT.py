@@ -4,6 +4,8 @@ import datetime
 
 st.set_page_config(page_title="ChunGPT", initial_sidebar_state="auto")
 
+url = "https://da22-171-243-49-10.ngrok-free.app"
+
 # Get today's date
 today = datetime.datetime.now().strftime("%Y-%m-%d")
 
@@ -43,7 +45,7 @@ for msg in st.session_state.messages:
 def generate_llama2_response(prompt):
     """Function to generate response from the AI server."""
     client = OpenAI(
-        base_url="https://8668-171-243-49-10.ngrok-free.app/v1",
+        base_url=f"{url}/v1",
         api_key=ollama_api_key,
     )
 
