@@ -1,6 +1,13 @@
 import streamlit as st
 from openai import OpenAI
 import datetime
+from respositories.client_respository import (
+    Repository_client,
+)  # Import your repository class
+
+# Set up your SQLite database path (adjust if necessary)
+db_path = "client_db_1.sqlite3"
+repo_client = Repository_client(db_path)
 
 st.set_page_config(page_title="ChunGPT", initial_sidebar_state="auto")
 
@@ -26,10 +33,15 @@ custom_ai = f"""
 with st.sidebar:
     ollama_api_key = "ollama"
     "[Source của tôi](https://github.com/Chunn241529/ChunGPT/blob/main/ui/ChunGPT.py)"
-    st.empty()
+    button_clicked = st.sidebar.button("Xóa tin nhắn")
+    if button_clicked:
+        repo_client.delete_brain_history_chat_all()
+
 
 st.title("💬 ChunGPT")
 st.caption("🚀 ChungGPT được cung cấp bởi OllamaAI")
+
+history = repo_client.get_brain_history_chat()
 
 # Initialize message state with custom AI instructions
 if "messages" not in st.session_state:
@@ -37,6 +49,10 @@ if "messages" not in st.session_state:
         {"role": "system", "content": custom_ai},  # Add system instructions
         {"role": "assistant", "content": "Chào, tôi có thể giúp gì cho bạn?"},
     ]
+    # If there is any existing history, add it to the session state
+    if history:
+        for _, role, content, _ in history:
+            st.session_state["messages"].append({"role": role, "content": content})
 
 # Display previous messages (but exclude system message from the chat)
 for msg in st.session_state.messages:
@@ -71,6 +87,9 @@ if prompt := st.chat_input(placeholder="Nhập tin nhắn..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.chat_message("user").write(prompt)
 
+    # Insert the user message into the database
+    repo_client.insert_brain_history_chat(role="user", content=prompt)
+
     # Generate a new response if last message is not from assistant
     if st.session_state.messages[-1]["role"] != "assistant":
         with st.chat_message("assistant"):
@@ -102,4 +121,9 @@ if prompt := st.chat_input(placeholder="Nhập tin nhắn..."):
                 # Thêm phản hồi vào lịch sử tin nhắn
                 st.session_state.messages.append(
                     {"role": "assistant", "content": full_response}
+                )
+
+                # Insert the assistant's response into the database
+                repo_client.insert_brain_history_chat(
+                    role="assistant", content=full_response
                 )
