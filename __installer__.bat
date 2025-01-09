@@ -56,6 +56,7 @@ IF NOT EXIST requirements.txt (
         echo markdown
         echo pygments
         echo beautifulsoup4
+        echo streamlit-extras
 
     ) > requirements.txt
 ) ELSE (

@@ -11,7 +11,7 @@ repo_client = Repository_client(db_path)
 
 st.set_page_config(page_title="ChunGPT", initial_sidebar_state="auto")
 
-url_ngrok = "https://da22-171-243-49-10.ngrok-free.app"
+# url_ngrok = "https://da22-171-243-49-10.ngrok-free.app"
 url_local = "http://localhost:11434"
 
 # Get today's date
@@ -23,7 +23,7 @@ custom_ai = f"""
         - Bạn là ChunGPT.
         - Bạn là một assistant tận tâm.
         - Bạn nhiệt huyết và luôn cố gắng thực hiện theo yêu cầu của tôi hết mình và đầy đủ.
-        - Bạn luôn cố gắng kèm thêm link ở cuối tin nhắn để thêm thông tin cho người dùng.
+        - Bạn luôn có thể kèm link ở cuối tin nhắn để thêm thông tin cho người dùng.
         - Bạn có thể đưa emoji vào tùy trường hợp.
         - Trừ tiếng Anh và Tiếng Việt, bạn không đưa ngôn ngữ khác vào.
         - No Yapping, Limit Prose, No Fluff
@@ -33,7 +33,7 @@ custom_ai = f"""
 with st.sidebar:
     ollama_api_key = "ollama"
     "[My source](https://github.com/Chunn241529/ChunGPT/blob/main/ui/ChunGPT.py) 🗃️"
-    "[Buy me a coffee](https://github.com/Chunn241529/ChunGPT/blob/main/ui/assets/img/buymecoffee.png) ❤️"
+    "[Buy me a coffee](https://github.com/Chunn241529/ChunGPT/blob/main/ui/assets/img/buymecoffee.png?raw=true) ❤️"
     button_clicked = st.sidebar.button("Xóa tin nhắn")
     if button_clicked:
         repo_client.delete_brain_history_chat_all()
@@ -70,7 +70,7 @@ def generate_llama2_response(prompt):
 
     # Sử dụng stream để nhận dữ liệu từng phần, giúp phản hồi nhanh hơn
     response = client.chat.completions.create(
-        model="qwen2.5:14b",
+        model="qwen2.5-coder:7b",
         messages=st.session_state["messages"],
         stream=True,
     )

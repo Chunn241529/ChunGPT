@@ -8,3 +8,4 @@ chatbot_v2_server.sqlite3
 client_db_1.sqlite3
 modules
 launch.bat
+ChunGPT1.py
